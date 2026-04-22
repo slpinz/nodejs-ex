@@ -35,7 +35,7 @@ jobs:
       - name: Checkout Manifest Repo (nodejs-cd)
         uses: actions/checkout@v3
         with:
-          repository: slpinz/nodejs-cd # ชื่อเจ้าของ/ชื่อRepo ฝั่ง YAML
+          repository: slpinz/nodejs-deploy # ชื่อเจ้าของ/ชื่อRepo ฝั่ง YAML
           token: ${{ secrets.GH_PAT }}
           path: nodejs-cd-repo
 
