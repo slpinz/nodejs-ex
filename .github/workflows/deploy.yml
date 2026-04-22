@@ -1,0 +1,53 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "master" ] # ตรวจสอบว่าคุณใช้ master หรือ main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v3
+
+      - name: Login to Quay.io
+        uses: docker/login-action@v2
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
+
+      - name: Build and Push Image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          # ใช้เลข SHA ของ Git มาเป็น Tag เพื่อให้ Argo CD เห็นความต่าง
+          tags: |
+            quay.io/kanaet3888/nodejs:${{ github.sha }}
+            quay.io/kanaet3888/nodejs:latest
+
+  update-manifest:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Manifest Repo (nodejs-cd)
+        uses: actions/checkout@v3
+        with:
+          repository: slpinz/nodejs-cd # ชื่อเจ้าของ/ชื่อRepo ฝั่ง YAML
+          token: ${{ secrets.GH_PAT }}
+          path: nodejs-cd-repo
+
+      - name: Update Image Tag in deployment.yaml
+        run: |
+          cd nodejs-cd-repo
+          # ค้นหาบรรทัดที่มี image: quay.io/kanaet3888/nodejs และเปลี่ยน Tag เป็นเลข SHA ใหม่
+          sed -i "s|image: quay.io/kanaet3888/nodejs:.*|image: quay.io/kanaet3888/nodejs:${{ github.sha }}|g" deployment.yaml
+          
+          # ตั้งค่า Git และทำการ Push กลับไปที่ Repo
+          git config --global user.email "gitops-bot@example.com"
+          git config --global user.name "GitOps Bot"
+          git add deployment.yaml
+          git commit -m "chore: auto-update image tag to ${{ github.sha }}"
+          git push
