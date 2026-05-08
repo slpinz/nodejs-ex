@@ -48,9 +48,7 @@ jobs:
           # ตั้งค่า Git และทำการ Push กลับไปที่ Repo
           git config --global user.email "gitops-bot@example.com"
           git config --global user.name "GitOps Bot"
-          git checkout -b update-image-${{ github.sha }}
-          git add deployment.yaml
-          git commit -m "chore: auto-update image tag to ${{ github.sha }}"
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
