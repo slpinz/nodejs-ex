@@ -46,7 +46,7 @@ jobs:
           git config --global user.email "gitops-bot@example.com"
           git config --global user.name "GitOps Bot"
 
-          git pull origin master
+          git pull --no-rebase origin master
 
           sed -i "s|image: quay.io/kanaet3888/nodejs:.*|image: quay.io/kanaet3888/nodejs:${{ github.sha }}|g" deployment.yaml
 
