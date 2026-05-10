@@ -42,13 +42,13 @@ jobs:
       - name: Update Image Tag in deployment.yaml
         run: |
           cd nodejs-cd-repo
-          # ค้นหาบรรทัดที่มี image: quay.io/kanaet3888/nodejs และเปลี่ยน Tag เป็นเลข SHA ใหม่
-          sed -i "s|image: quay.io/kanaet3888/nodejs:.*|image: quay.io/kanaet3888/nodejs:${{ github.sha }}|g" deployment.yaml
-          
-          # ตั้งค่า Git และทำการ Push กลับไปที่ Repo
+
           git config --global user.email "gitops-bot@example.com"
           git config --global user.name "GitOps Bot"
-          git add deployment.yaml
+
+          git pull origin master
+
+          sed -i "s|image: quay.io/kanaet3888/nodejs:.*|image: quay.io/kanaet3888/nodejs:${{ github.sha }}|g" deployment.yaml
 
           git add deployment.yaml
           git commit -m "Deploy image ${{ github.sha }}" || echo "No changes to commit"
