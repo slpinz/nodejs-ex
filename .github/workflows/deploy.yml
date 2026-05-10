@@ -49,7 +49,11 @@ jobs:
           git config --global user.email "gitops-bot@example.com"
           git config --global user.name "GitOps Bot"
           git add deployment.yaml
+
           git diff --cached --quiet || git commit -m "Deploy image ${{ github.sha }}"
+
+          git pull --rebase origin master
+
           git push origin HEAD:master
 
   ##    - name: Create Pull Request
