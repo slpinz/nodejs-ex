@@ -50,11 +50,10 @@ jobs:
           git config --global user.name "GitOps Bot"
           git add deployment.yaml
 
-          git diff --cached --quiet || git commit -m "Deploy image ${{ github.sha }}"
+          git add deployment.yaml
+          git commit -m "Deploy image ${{ github.sha }}" || echo "No changes to commit"
 
-          git pull --rebase origin master
-
-          git push origin HEAD:master
+          git push --force-with-lease origin HEAD:master
 
   ##    - name: Create Pull Request
   ##      uses: peter-evans/create-pull-request@v5
