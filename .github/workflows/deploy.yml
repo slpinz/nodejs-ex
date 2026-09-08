@@ -63,19 +63,3 @@ jobs:
   ##        branch: update-image-${{ github.sha }}
   ##        title: "Deploy: update image to ${{ github.sha }}"
   ##        body: "Auto update from CI"
-      - name: Microsoft Teams Notification
-        uses: skitionek/notify-microsoft-teams@master
-        if: always() # สำคัญ! เพื่อให้แจ้งเตือนทั้งตอนสำเร็จและตอนพัง
-        with:
-          webhook_url: ${{ secrets.TEAMS_WEBHOOK_URL }}
-          overwrite: |
-            {
-              "title": "CI/CD Pipeline: ${{ job.status }}",
-              "text": "Repo: ${{ github.repository }} \nCommit: ${{ github.sha }}",
-              "sections": [{
-                "facts": [
-                  { "name": "Status", "value": "${{ job.status }}" },
-                  { "name": "Author", "value": "${{ github.actor }}" }
-                ]
-              }]
-            }
